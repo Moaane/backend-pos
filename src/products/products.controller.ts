@@ -22,10 +22,8 @@ import {
 } from './dto/update-product.dto';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { ProductInterface } from './interfaces/product.interface';
-import {
-  PaginatedResult,
-  PaginateOptions,
-} from 'src/common/paginator/paginator';
+import { PaginatedResult } from 'src/common/intefaces/pagination.interface';
+import { PaginateOptions } from 'src/common/types/pagination.type';
 
 @Controller('products')
 export class ProductsController {

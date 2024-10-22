@@ -2,12 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  PaginatedResult,
-  PaginateOptions,
-  paginator,
-} from 'src/common/paginator/paginator';
+import { paginator } from 'src/common/paginator/paginator';
 import { ProductInterface } from './interfaces/product.interface';
+import { PaginatedResult } from 'src/common/intefaces/pagination.interface';
+import { PaginateOptions } from 'src/common/types/pagination.type';
 
 @Injectable()
 export class ProductsService {
