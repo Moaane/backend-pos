@@ -42,11 +42,17 @@ export class ProductsController {
     }
   }
 
-  @Get('')
+  @Get()
   async findAll(
-    @Query('category') category: string,
+    @Query('sort')
+    sort: string,
+    @Query('category')
+    category: string,
   ): Promise<ProductInterface[]> {
     try {
+      if (sort === 'desc' || sort === 'esc') {
+        return await this.service.findAllWithCount(sort);
+      }
       if (category) {
         return await this.service.findAllByCategory(category);
       }

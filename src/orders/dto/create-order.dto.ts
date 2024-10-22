@@ -1,3 +1,4 @@
+import { CreateOrderItemSchema } from 'src/order-items/dto/create-order-item.dto';
 import { z } from 'zod';
 
 export const CreateOrderSchema = z
@@ -31,6 +32,7 @@ export const CreateOrderSchema = z
       required_error: 'staff name is required',
       invalid_type_error: 'staff name must be a string',
     }),
+    orderItems: z.array(CreateOrderItemSchema),
   })
   .required();
 

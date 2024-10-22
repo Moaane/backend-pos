@@ -12,7 +12,14 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderItemsModule } from './order-items/order-items.module';
 
 @Module({
-  imports: [PrismaModule, ProductsModule, CategoriesModule, ProductTypeModule, OrdersModule, OrderItemsModule],
+  imports: [
+    PrismaModule,
+    ProductsModule,
+    CategoriesModule,
+    ProductTypeModule,
+    OrdersModule,
+    OrderItemsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

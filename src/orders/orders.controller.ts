@@ -9,6 +9,7 @@ import {
   UsePipes,
   HttpException,
   InternalServerErrorException,
+  Query,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto, CreateOrderSchema } from './dto/create-order.dto';
@@ -37,9 +38,11 @@ export class OrdersController {
   }
 
   @Get()
-  async findAll(): Promise<OrderInterface[]> {
+  async findAll(@Query('items') items: string) {
     try {
-      return await this.service.findAll();
+      const isItems = items === 'true';
+      const orders = await this.service.findAll(isItems);
+      return orders;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

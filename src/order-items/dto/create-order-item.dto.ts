@@ -28,10 +28,11 @@ export const CreateOrderItemSchema = z
       .nullable(),
     orderId: z
       .string({
-        required_error: 'order id is required',
         invalid_type_error: 'order id must be a string',
       })
-      .uuid({ message: 'order id must be a uuid' }),
+      .uuid({ message: 'order id must be a uuid' })
+      .optional()
+      .nullable(),
   })
   .required();
 

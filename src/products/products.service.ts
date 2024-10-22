@@ -16,6 +16,22 @@ export class ProductsService {
     });
   }
 
+  async findAllWithCount(sort: string) {
+    const products = await this.db.product.findMany({
+      include: {
+        category: true,
+        productType: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+      },
+      orderBy: { orderItems: { _count: sort === 'desc' ? 'desc' : 'asc' } },
+    });
+    return products;
+  }
+
   async findAllByCategory(categoryId: string) {
     return await this.db.product.findMany({
       where: { categoryId: categoryId },

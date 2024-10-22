@@ -1,3 +1,5 @@
+import { OrderItemInterface } from 'src/order-items/interfaces/order-item.interface';
+
 export interface OrderInterface {
   id: string;
   basePrice: number;
@@ -8,4 +10,5 @@ export interface OrderInterface {
   updatedAt: Date;
   staffName: string;
   staffId: string | null;
+  orderItems?: OrderItemInterface[] | null;
 }

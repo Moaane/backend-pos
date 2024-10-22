@@ -3,5 +3,5 @@ export interface OrderItemInterface {
   productPrice: number;
   quantity: number;
   productId?: string | null;
-  orderId: string;
+  orderId: string | null;
 }
