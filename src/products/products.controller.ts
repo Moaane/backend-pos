@@ -22,6 +22,10 @@ import {
 } from './dto/update-product.dto';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { ProductInterface } from './interfaces/product.interface';
+import {
+  PaginatedResult,
+  PaginateOptions,
+} from 'src/common/paginator/paginator';
 
 @Controller('products')
 export class ProductsController {
@@ -48,16 +52,20 @@ export class ProductsController {
     sort: string,
     @Query('category')
     category: string,
-  ): Promise<ProductInterface[]> {
+    @Query('search')
+    search: string,
+    @Query() options: PaginateOptions,
+  ): Promise<PaginatedResult<ProductInterface>> {
     try {
-      if (sort === 'desc' || sort === 'esc') {
-        return await this.service.findAllWithCount(sort);
-      }
-      if (category) {
-        return await this.service.findAllByCategory(category);
-      }
-      return await this.service.findAll();
+      // if (sort === 'desc' || sort === 'asc') {
+      //   return await this.service.findAllWithCount(sort, search);
+      // }
+      // if (category) {
+      //   return await this.service.findAllByCategory(category, search);
+      // }
+      return await this.service.findAll(search, options);
     } catch (error) {
+      console.log(error);
       if (error instanceof HttpException) {
         throw error;
       }

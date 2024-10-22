@@ -13,11 +13,12 @@ export class FormatResponseInterceptor implements NestInterceptor {
       map((value) => {
         const response = context.switchToHttp().getResponse();
         const statusCode = response.statusCode;
+        const isPaginatedResult = value.data && value.meta !== undefined;
         const formattedResponse = {
           status: 'success',
-          statusCode: statusCode, // Menyertakan statusCode
-          message: 'Request was successful', // Pesan tetap, sesuai keinginan Anda
-          data: value ? value : [], // Mengatur data yang dikembalikan
+          statusCode: statusCode,
+          message: 'Request was successful',
+          data: isPaginatedResult ? value.data : value,
         };
         return formattedResponse;
       }),

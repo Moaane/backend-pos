@@ -2,22 +2,47 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  PaginatedResult,
+  PaginateOptions,
+  paginator,
+} from 'src/common/paginator/paginator';
+import { ProductInterface } from './interfaces/product.interface';
 
 @Injectable()
 export class ProductsService {
   constructor(readonly db: PrismaService) {}
+  private readonly defaultOptions: PaginateOptions = { page: 1, perPage: 10 };
+  private readonly paginate = paginator(this.defaultOptions);
+
   async create(createProductDto: CreateProductDto) {
     return await this.db.product.create({ data: createProductDto });
   }
 
-  async findAll() {
-    return await this.db.product.findMany({
-      include: { category: true, productType: true },
-    });
+  async findAll(
+    search: string,
+    options: PaginateOptions,
+  ): Promise<PaginatedResult<ProductInterface>> {
+    const products = await this.paginate<ProductInterface, any>(
+      this.db.product,
+      {
+        where: {
+          name: { contains: search },
+        },
+        include: { category: true, productType: true },
+      },
+      options,
+    );
+    return products;
   }
 
-  async findAllWithCount(sort: string) {
-    const products = await this.db.product.findMany({
+  async findAllWithCount(sort: string, search: string) {
+    return await this.db.product.findMany({
+      where: {
+        name: {
+          contains: search,
+        },
+      },
       include: {
         category: true,
         productType: true,
@@ -27,14 +52,15 @@ export class ProductsService {
           },
         },
       },
-      orderBy: { orderItems: { _count: sort === 'desc' ? 'desc' : 'asc' } },
+      orderBy: {
+        orderItems: { _count: sort === 'desc' ? 'desc' : 'asc' },
+      },
     });
-    return products;
   }
 
-  async findAllByCategory(categoryId: string) {
+  async findAllByCategory(categoryId: string, search: string) {
     return await this.db.product.findMany({
-      where: { categoryId: categoryId },
+      where: { name: { contains: search }, categoryId: categoryId },
     });
   }
 
