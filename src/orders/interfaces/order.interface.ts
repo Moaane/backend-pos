@@ -6,6 +6,6 @@ export interface OrderInterface {
   totalPrice: number;
   createdAt: Date;
   updatedAt: Date;
-  staffId: string;
-  
+  staffName: string;
+  staffId: string | null;
 }
