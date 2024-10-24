@@ -1,4 +1,3 @@
-import { Product } from '@prisma/client';
 import { CategoryInterface } from 'src/categories/intefaces/category.interface';
 import { ProductTypeInterface } from 'src/product-type/interfaces/product-type.interface';
 

@@ -2,6 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginateOptions } from 'src/common/types/pagination.type';
+import { paginator } from 'src/common/paginator/paginator';
+import { CategoryInterface } from './intefaces/category.interface';
 
 @Injectable()
 export class CategoriesService {
@@ -11,8 +14,67 @@ export class CategoriesService {
     return await this.db.category.create({ data: createCategoryDto });
   }
 
-  async findAll() {
-    return await this.db.category.findMany();
+  async findAllByProduct(
+    search: string,
+    order: string,
+    options: PaginateOptions,
+  ) {
+    const paginate = paginator(options);
+    const categories = await paginate<CategoryInterface, any>(
+      this.db.category,
+      {
+        where: {
+          name: {
+            contains: search,
+          },
+        },
+        include: {
+          _count: {
+            select: {
+              products: true,
+            },
+          },
+        },
+        orderBy: {
+          products: {
+            _count: order === 'desc' ? 'desc' : 'asc',
+          },
+        },
+      },
+      options,
+    );
+    return categories;
+  }
+
+  async findAllWithPagination(search: string, options: PaginateOptions) {
+    const paginate = paginator(options);
+    const categories = await paginate<CategoryInterface, any>(
+      this.db.category,
+      {
+        where: { name: { contains: search } },
+        include: {
+          _count: {
+            select: {
+              products: true,
+            },
+          },
+        },
+        orderBy: {
+          products: {
+            _count: 'asc',
+          },
+        },
+      },
+      options,
+    );
+    return categories;
+  }
+
+  async findAll(search: string) {
+    const categories = await this.db.category.findMany({
+      where: { name: { contains: search } },
+    });
+    return categories;
   }
 
   async findOne(id: string) {
@@ -37,7 +99,8 @@ export class CategoriesService {
   }
 
   async remove(id: string) {
+    await this.findOne(id);
     await this.db.category.delete({ where: { id: id } });
-    return;
+    return [];
   }
 }

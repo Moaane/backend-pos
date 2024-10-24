@@ -34,6 +34,7 @@ model Product {
   price         Int
   categoryId    String?      @map("category_id") @db.Uuid
   productTypeId String?      @map("product_type_id") @db.Uuid
+  image         Json?
   category      Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   productType   ProductType? @relation(fields: [productTypeId], references: [id], onDelete: SetNull)
   orderItems    OrderItem[]

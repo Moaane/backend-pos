@@ -55,12 +55,12 @@ export class ProductsController {
     @Query() options: PaginateOptions,
   ): Promise<PaginatedResult<ProductInterface>> {
     try {
-      // if (sort === 'desc' || sort === 'asc') {
-      //   return await this.service.findAllWithCount(sort, search);
-      // }
-      // if (category) {
-      //   return await this.service.findAllByCategory(category, search);
-      // }
+      if (sort === 'desc' || sort === 'asc') {
+        return await this.service.findAllWithCount(sort, search, options);
+      }
+      if (category) {
+        return await this.service.findAllByCategory(category, search, options);
+      }
       return await this.service.findAll(search, options);
     } catch (error) {
       console.log(error);

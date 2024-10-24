@@ -9,6 +9,7 @@ import {
   UsePipes,
   HttpException,
   InternalServerErrorException,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import {
@@ -21,6 +22,8 @@ import {
 } from './dto/update-category.dto';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { CategoryInterface } from './intefaces/category.interface';
+import { PaginatedResult } from 'src/common/intefaces/pagination.interface';
+import { PaginateOptions } from 'src/common/types/pagination.type';
 
 @Controller('categories')
 export class CategoriesController {
@@ -42,9 +45,28 @@ export class CategoriesController {
   }
 
   @Get()
-  async findAll(): Promise<CategoryInterface[]> {
+  async findAll(
+    @Query('sort')
+    sort: string,
+    @Query('order')
+    order: string,
+    @Query('search')
+    search: string,
+    @Query() options: PaginateOptions,
+  ): Promise<PaginatedResult<CategoryInterface> | CategoryInterface[]> {
     try {
-      return await this.service.findAll();
+      console.log(options);
+
+      if (sort === 'product') {
+        return await this.service.findAllByProduct(search, order, options);
+      }
+      if (options.page && options.perPage) {
+        return await this.service.findAllWithPagination(search, options);
+      }
+
+      const c = await this.service.findAll(search);
+      console.log(c);
+      return c;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -81,7 +103,9 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id') id: string) {
+    console.log(id);
+
     try {
       return this.service.remove(id);
     } catch (error) {

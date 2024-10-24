@@ -34,32 +34,52 @@ export class ProductsService {
     return products;
   }
 
-  async findAllWithCount(sort: string, search: string) {
-    return await this.db.product.findMany({
-      where: {
-        name: {
-          contains: search,
-        },
-      },
-      include: {
-        category: true,
-        productType: true,
-        _count: {
-          select: {
-            orderItems: true,
+  async findAllWithCount(
+    sort: string,
+    search: string,
+    options: PaginateOptions,
+  ): Promise<PaginatedResult<ProductInterface>> {
+    const products = await this.paginate<ProductInterface, any>(
+      this.db.product,
+      {
+        where: {
+          name: {
+            contains: search,
           },
         },
+        include: {
+          category: true,
+          productType: true,
+          _count: {
+            select: {
+              orderItems: true,
+            },
+          },
+        },
+        orderBy: {
+          orderItems: { _count: sort === 'desc' ? 'desc' : 'asc' },
+        },
       },
-      orderBy: {
-        orderItems: { _count: sort === 'desc' ? 'desc' : 'asc' },
-      },
-    });
+      options,
+    );
+
+    return products;
   }
 
-  async findAllByCategory(categoryId: string, search: string) {
-    return await this.db.product.findMany({
-      where: { name: { contains: search }, categoryId: categoryId },
-    });
+  async findAllByCategory(
+    categoryId: string,
+    search: string,
+    options: PaginateOptions,
+  ): Promise<PaginatedResult<ProductInterface>> {
+    const products = await this.paginate<ProductInterface, any>(
+      this.db.product,
+      {
+        where: { name: { contains: search }, categoryId: categoryId },
+      },
+      options,
+    );
+
+    return products;
   }
 
   async findOne(id: string) {
